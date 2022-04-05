@@ -1,8 +1,8 @@
-#Recipe book service
+# Recipe book service
 
 In progress...
 
-##As a user you will be able to: 
+## As a user you will be able to: 
 * register
 * login
 * edit your personal data
@@ -10,7 +10,7 @@ In progress...
 * add your own recipes
 * update or remove your recipes
 
-##Tech & framework used:
+## Tech & framework used:
 * Java 17
 * Spring boot
 * Rest API

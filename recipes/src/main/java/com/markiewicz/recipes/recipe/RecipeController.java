@@ -2,12 +2,13 @@ package com.markiewicz.recipes.recipe;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
 @AllArgsConstructor
+@RestController
 @RequestMapping("api/v1/recipe")
 public class RecipeController {
     RecipeService recipeService;

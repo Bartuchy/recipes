@@ -1,0 +1,15 @@
+USER
+-register
+-login
+-modify user data
+-add recipes
+-show all recipes
+-show added recipes
+-modify owned recipes
+-remove owned recipes
+
+ADMIN
+-all user functions
+-show all users
+-remove any recipe
+

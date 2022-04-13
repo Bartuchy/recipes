@@ -1,22 +1,24 @@
 package com.markiewicz.recipes.recipe;
 
+import com.markiewicz.recipes.security.UserDetailsImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("api/v1/recipe")
+@RequestMapping("api/recipe")
 public class RecipeController {
     RecipeService recipeService;
 
     @GetMapping("/all")
-    @ResponseStatus(HttpStatus.OK)
-    public List<Recipe> getAllRecipes() {
-        return recipeService.getAllRecipes();
+    public ResponseEntity<List<Recipe>> getAllRecipes() {
+        List<Recipe> recipes = recipeService.getAllRecipes();
+        return ResponseEntity.ok(recipes);
     }
 
     @GetMapping("/{id}")

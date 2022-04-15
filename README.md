@@ -16,7 +16,7 @@ In progress...
 * Rest API
 * Lombok
 * Spring Security/JWT
-* Spring Data MongoDB
-* MongoDB/NoSQL
+* JPA/Hibernate
+* PostgreSQL
 * Angular
 * Bootstrap

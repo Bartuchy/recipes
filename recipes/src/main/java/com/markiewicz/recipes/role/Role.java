@@ -1,17 +1,26 @@
 package com.markiewicz.recipes.role;
 
+import com.markiewicz.recipes.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Document
+@Entity
 public class Role {
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String name;
+    @ManyToMany
+    private List<User> users = new ArrayList<>();
+
+    public Role(String name) {
+        this.name = name;
+    }
 }

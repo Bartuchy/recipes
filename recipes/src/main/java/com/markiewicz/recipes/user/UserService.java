@@ -5,6 +5,8 @@ import com.markiewicz.recipes.exception.UserNotFoundException;
 import com.markiewicz.recipes.role.Role;
 import com.markiewicz.recipes.role.RoleRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,7 @@ public class UserService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(List.of(new Role(null, "ROLE_USER")));
+        user.setRoles(List.of(new Role("ROLE_USER")));
         userRepository.save(user);
     }
 
@@ -49,5 +51,11 @@ public class UserService {
 
     public User getUser(String email) {
         return userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    }
+
+    public User getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return findUserByEmail(email);
     }
 }

@@ -1,10 +1,11 @@
 package com.markiewicz.recipes.recipe;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-public interface RecipeRepository extends MongoRepository<Recipe, String> {
+@Repository
+public interface RecipeRepository extends JpaRepository<Recipe, Long>{
 
-    Optional<Recipe> findById(String id);
 }

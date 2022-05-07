@@ -29,6 +29,20 @@ public class RecipeService {
                 .orElseThrow(RecipeNotFoundException::new);
     }
 
+    public List<Recipe> getRecipesWithNameOrFromCategory(String name, String category) {
+        if (name == null ^ category == null) {
+            if (name != null) {
+                return recipeRepository
+                        .findByNameContainingIgnoreCaseOrderByDateDesc(name)
+                        .orElseThrow(RecipeNotFoundException::new);
+            }
+            return recipeRepository
+                    .findByCategoryContainingIgnoreCaseOrderByDateDesc(category)
+                    .orElseThrow(RecipeNotFoundException::new);
+        }
+        throw new RecipeNotFoundException();
+    }
+
     public Recipe addNewRecipe(Recipe recipe) {
         recipe.setDate(LocalDateTime.now());
         recipe.setUser(userService.getLoggedInUser());

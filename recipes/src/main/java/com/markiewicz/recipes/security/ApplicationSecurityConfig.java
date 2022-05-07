@@ -44,6 +44,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(
                 "api/recipe/all",
                 "api/recipe/{id}",
+                "api/recipe/search",
                 "api/recipe/add",
                 "api/recipe/update/{id}",
                 "api/recipe/remove/{id}"

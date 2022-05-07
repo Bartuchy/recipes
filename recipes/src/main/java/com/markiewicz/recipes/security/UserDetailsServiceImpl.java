@@ -3,8 +3,6 @@ package com.markiewicz.recipes.security;
 import com.markiewicz.recipes.user.User;
 import com.markiewicz.recipes.user.UserService;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -13,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,8 +29,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 @AllArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    private final int ACCESS_TOKEN_EXPIRATION_TIME = 20 * 60 * 1000;
-    private final int REFRESH_TOKEN_EXPIRATION_TIME = 60 * 60 * 1000;
+    public final int ACCESS_TOKEN_EXPIRATION_TIME = 20 * 60 * 1000;
+    public final int REFRESH_TOKEN_EXPIRATION_TIME = 60 * 60 * 1000;
 
     private final AuthenticationManager authenticationManager;
 
@@ -37,8 +38,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String username = request.getParameter("email");
         String password = request.getParameter("password");
+        System.out.println(username + " " + password);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+        System.out.println(authenticationToken);
         return authenticationManager.authenticate(authenticationToken);
+
     }
 
     @Override
@@ -63,8 +67,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .sign(algorithm);
 
         Map<String, String> tokens = new HashMap<>(Map.of(
-                "access_token", access_token,
-                "refresh_token", refresh_token));
+                "authenticationToken", access_token,
+                "refreshToken", refresh_token));
 
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);

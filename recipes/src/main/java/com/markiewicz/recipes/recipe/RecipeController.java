@@ -3,6 +3,7 @@ package com.markiewicz.recipes.recipe;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,27 +21,32 @@ public class RecipeController {
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public Recipe getRecipeById(@PathVariable Long id) {
-        return recipeService.getRecipeById(id);
+    public ResponseEntity<Recipe> getRecipeById(@PathVariable Long id) {
+        Recipe recipe = recipeService.getRecipeById(id);
+        return ResponseEntity.ok(recipe);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Recipe>> getRecipesWithNameOrFromCategory(@Nullable @RequestParam String name, @Nullable @RequestParam String category) {
+        List<Recipe> recipes = recipeService.getRecipesWithNameOrFromCategory(name, category);
+        return ResponseEntity.ok(recipes);
     }
 
     @PostMapping("/add")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Recipe addNewRecipe(@RequestBody Recipe recipe) {
-
-        return recipeService.addNewRecipe(recipe);
+    public ResponseEntity<Recipe> addNewRecipe(@RequestBody Recipe recipe) {
+        Recipe addedRecipe = recipeService.addNewRecipe(recipe);
+        return new ResponseEntity<>(addedRecipe, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void updateRecipe(@PathVariable Long id, @RequestBody Recipe recipe) {
+    public ResponseEntity<?> updateRecipe(@PathVariable Long id, @RequestBody Recipe recipe) {
         recipeService.updateRecipe(id, recipe);
+        return ResponseEntity.accepted().build();
     }
 
     @DeleteMapping("/remove/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void removeRecipeById(@PathVariable Long id) {
+    public ResponseEntity<?> removeRecipeById(@PathVariable Long id) {
         recipeService.removeRecipeById(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,15 +1,10 @@
 package com.markiewicz.recipes.recipe;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.markiewicz.recipes.security.UserDetailsImpl;
-import com.markiewicz.recipes.security.UserDetailsServiceImpl;
 import com.markiewicz.recipes.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

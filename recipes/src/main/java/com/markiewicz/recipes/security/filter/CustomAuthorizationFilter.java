@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,21 +28,30 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
+    public static final String SECRET = "secret";
+    public static final String TOKEN_PREFIX = "Bearer ";
+    public static final String SIGN_UP_URL = "api/login";
+
+
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/user/token/refresh")) {
+    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
+        if (request.getServletPath().equals(SIGN_UP_URL) || request.getServletPath().equals("/api/user/token/refresh")) {
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {
                 try {
-                    String token = authorizationHeader.substring("Bearer ".length());
-                    Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+                    String token = authorizationHeader.substring(TOKEN_PREFIX.length());
+                    Algorithm algorithm = Algorithm.HMAC256(SECRET.getBytes());
+
                     JWTVerifier verifier = JWT.require(algorithm).build();
                     DecodedJWT decodedJWT = verifier.verify(token);
+
                     String username = decodedJWT.getSubject();
                     String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
                     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
                     stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
@@ -49,7 +59,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 } catch (Exception exception) {
                     response.setHeader("error", exception.getMessage());
                     response.setStatus(FORBIDDEN.value());
-                    //response.sendError(FORBIDDEN.value());
                     Map<String, String> error = new HashMap<>(Map.of(
                             "error_message", exception.getMessage()));
 
@@ -60,5 +69,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
             }
         }
+
+
     }
 }

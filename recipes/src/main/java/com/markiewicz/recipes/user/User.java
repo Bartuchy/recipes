@@ -26,6 +26,8 @@ public class User {
     @Email
     private String email;
 
+    private String username;
+
     @Pattern(regexp = ".{8,}")
     private String password;
 

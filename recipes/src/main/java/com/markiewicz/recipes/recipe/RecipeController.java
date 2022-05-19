@@ -10,6 +10,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping("api/recipe")
 public class RecipeController {
     RecipeService recipeService;

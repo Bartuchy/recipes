@@ -6,8 +6,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.markiewicz.recipes.role.Role;
+import com.markiewicz.recipes.jwt.JwtToken;
 import lombok.AllArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,14 +28,29 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin
 @RequestMapping("api/user")
 public class UserController {
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtToken jwtToken;
 
     @PostMapping("/register")
     public void registerUser(@Valid @RequestBody User user) {
         userService.registerUser(user);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody User user) {
+        authenticate(user.getEmail(), user.getPassword());
+
+        User userDetails = userService.findUserByEmail(user.getEmail());
+        String token = jwtToken.generateToken(userDetails);
+        return ResponseEntity.ok(Map.of("authenticationToken", token));
+    }
+
+    private void authenticate(String email, String password) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
     }
 
     @GetMapping("token/refresh")

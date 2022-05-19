@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 @NoArgsConstructor
-public class UserDetailsImpl implements UserDetails {
+public class UserDetailsImpl extends User implements UserDetails {
     private String email;
     private String password;
     private final List<SimpleGrantedAuthority> authorities = new ArrayList<>();

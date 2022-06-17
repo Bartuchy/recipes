@@ -3,6 +3,7 @@ package com.markiewicz.recipes.recipe;
 import com.markiewicz.recipes.exception.ForbiddenException;
 import com.markiewicz.recipes.exception.RecipeNotFoundException;
 
+import com.markiewicz.recipes.recipe.dto.RecipeDto;
 import com.markiewicz.recipes.user.UserService;
 import lombok.AllArgsConstructor;
 
@@ -19,14 +20,27 @@ public class RecipeService {
     private final RecipeRepository recipeRepository;
     UserService userService;
 
-    public List<Recipe> getAllRecipes() {
-        return recipeRepository.findAll();
+    public List<RecipeDto> getAllRecipes() {
+        List<Recipe> recipes = recipeRepository.findAll();
+        return recipes.stream()
+                .map(RecipeDto::new).toList();
     }
 
-    public Recipe getRecipeById(Long id) {
-        return recipeRepository
+    public RecipeDto getRecipeById(Long id) {
+        Recipe recipe = recipeRepository
                 .findById(id)
                 .orElseThrow(RecipeNotFoundException::new);
+        return new RecipeDto(recipe);
+    }
+
+    public List<RecipeDto> getRecipesAddedByUser(String username) {
+        return recipeRepository
+                .findRecipesAddedByUser(username)
+                .orElseThrow(RecipeNotFoundException::new)
+                .stream()
+                .map(RecipeDto::new)
+                .toList();
+
     }
 
     public List<Recipe> getRecipesWithNameOrFromCategory(String name, String category) {

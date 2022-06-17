@@ -1,5 +1,6 @@
 package com.markiewicz.recipes.recipe;
 
+import com.markiewicz.recipes.recipe.dto.RecipeDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +17,21 @@ public class RecipeController {
     RecipeService recipeService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<Recipe>> getAllRecipes() {
-        List<Recipe> recipes = recipeService.getAllRecipes();
+    public ResponseEntity<List<RecipeDto>> getAllRecipes() {
+        List<RecipeDto> recipes = recipeService.getAllRecipes();
         return ResponseEntity.ok(recipes);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Recipe> getRecipeById(@PathVariable Long id) {
-        Recipe recipe = recipeService.getRecipeById(id);
+    public ResponseEntity<RecipeDto> getRecipeById(@PathVariable Long id) {
+        RecipeDto recipe = recipeService.getRecipeById(id);
         return ResponseEntity.ok(recipe);
+    }
+
+    @GetMapping("profile/{username}")
+    public ResponseEntity<List<RecipeDto>> getRecipesAddedByUser(@PathVariable String username) {
+        List<RecipeDto> recipes = recipeService.getRecipesAddedByUser(username);
+        return ResponseEntity.ok(recipes);
     }
 
     @GetMapping("/search")
@@ -40,13 +47,13 @@ public class RecipeController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateRecipe(@PathVariable Long id, @RequestBody Recipe recipe) {
+    public ResponseEntity<Void> updateRecipe(@PathVariable Long id, @RequestBody Recipe recipe) {
         recipeService.updateRecipe(id, recipe);
         return ResponseEntity.accepted().build();
     }
 
     @DeleteMapping("/remove/{id}")
-    public ResponseEntity<?> removeRecipeById(@PathVariable Long id) {
+    public ResponseEntity<Void> removeRecipeById(@PathVariable Long id) {
         recipeService.removeRecipeById(id);
         return ResponseEntity.noContent().build();
     }

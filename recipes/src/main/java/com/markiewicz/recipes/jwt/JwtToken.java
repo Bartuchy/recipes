@@ -14,48 +14,39 @@ import java.util.function.Function;
 
 @Component
 public class JwtToken {
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 80;
+    public static final long JWT_TOKEN_VALIDITY = 1000 * 60 * 60 * 10;
 
     @Value("${jwt.secret}")
     private String secret;
 
-    public String getUsernameFromToken(String token) {
-        return getClaimFromToken(token, Claims::getSubject);
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
     }
 
-    public Date getIssuedAtDateFromToken(String token) {
-        return getClaimFromToken(token, Claims::getIssuedAt);
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
     }
 
-    public Date getExpirationDateFromToken(String token) {
-        return getClaimFromToken(token, Claims::getExpiration);
-    }
-
-    public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = getAllClaimsFromToken(token);
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
 
-    private Claims getAllClaimsFromToken(String token) {
+    private Claims extractClaimsFromToken(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }
 
     private Boolean isTokenExpired(String token) {
-        final Date expiration = getExpirationDateFromToken(token);
+        final Date expiration = extractExpiration(token);
         return expiration.before(new Date());
-    }
-
-    private Boolean ignoreTokenExpiration(String token) {
-        // here you specify tokens, for that the expiration is ignored
-        return false;
     }
 
     public String generateToken(User userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        return doGenerateToken(claims, userDetails.getEmail());
+        return createToken(claims, userDetails.getEmail());
     }
 
-    private String doGenerateToken(Map<String, Object> claims, String subject) {
+    private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
@@ -65,12 +56,8 @@ public class JwtToken {
                 .compact();
     }
 
-    public Boolean canTokenBeRefreshed(String token) {
-        return (!isTokenExpired(token) || ignoreTokenExpiration(token));
-    }
-
     public Boolean validateToken(String token, User userDetails) {
-        final String username = getUsernameFromToken(token);
+        final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 }

@@ -7,6 +7,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.markiewicz.recipes.role.Role;
 import com.markiewicz.recipes.jwt.JwtToken;
+import com.markiewicz.recipes.user.dto.UserRegisterDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,7 +37,7 @@ public class UserController {
     private final JwtToken jwtToken;
 
     @PostMapping("/register")
-    public void registerUser(@Valid @RequestBody User user) {
+    public void registerUser(@Valid @RequestBody UserRegisterDto user) {
         userService.registerUser(user);
     }
 
@@ -46,7 +47,11 @@ public class UserController {
 
         User userDetails = userService.findUserByEmail(user.getEmail());
         String token = jwtToken.generateToken(userDetails);
-        return ResponseEntity.ok(Map.of("authenticationToken", token));
+        return ResponseEntity.ok(Map.of(
+                "authenticationToken", token,
+                "username", userDetails.getUsername(),
+                "email", userDetails.getEmail()
+        ));
     }
 
     private void authenticate(String email, String password) {
@@ -72,7 +77,7 @@ public class UserController {
                         .sign(algorithm);
 
                 Map<String, String> tokens = new HashMap<>(Map.of(
-                        "access_token", access_token,
+                        //"access_token", access_token,
                         "refresh_token", refresh_token));
 
                 response.setContentType(APPLICATION_JSON_VALUE);

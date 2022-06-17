@@ -33,20 +33,20 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(passwordEncoder);
     }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf().disable()
-                .authorizeRequests().antMatchers("/api/user/login", "/api/user/token/refresh", "/api/user/register").permitAll()
+        httpSecurity.cors().and().csrf().disable()
+                .authorizeRequests().antMatchers("/api/user/login", "/api/user/register").permitAll()
                 .anyRequest().authenticated().and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }

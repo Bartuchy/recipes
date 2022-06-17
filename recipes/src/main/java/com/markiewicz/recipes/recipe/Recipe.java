@@ -5,11 +5,13 @@ import com.markiewicz.recipes.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @AllArgsConstructor
@@ -24,21 +26,21 @@ public class Recipe {
     private String category;
     private String description;
 
-    @ElementCollection
-    @CollectionTable(name = "ingredient", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "name")
-    private List<String> ingredients = new ArrayList<>();
+//    @ElementCollection
+//    @CollectionTable(name = "ingredient", joinColumns = @JoinColumn(name = "id"))
+//    @Column(name = "name")
+    private String ingredients;
 
-    @ElementCollection
-    @CollectionTable(name = "direction", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "name")
-    private List<String> directions = new ArrayList<>();
+//    @ElementCollection
+//    @CollectionTable(name = "direction", joinColumns = @JoinColumn(name = "id"))
+//    @Column(name = "name")
+    private String directions;
 
     @ManyToOne
     @JsonIgnoreProperties(value="recipes")
     private User user;
 
-    public Recipe(String name, String category, String description, List<String> ingredients, List<String> directions) {
+    public Recipe(String name, String category, String description, String ingredients, String directions) {
         this.name = name;
         this.category = category;
         this.description = description;

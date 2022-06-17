@@ -4,6 +4,7 @@ import com.markiewicz.recipes.exception.UserExistsException;
 import com.markiewicz.recipes.exception.UserNotFoundException;
 import com.markiewicz.recipes.role.Role;
 import com.markiewicz.recipes.role.RoleRepository;
+import com.markiewicz.recipes.user.dto.UserRegisterDto;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,13 +23,17 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void registerUser(User user) {
-        Optional<User> foundUser = userRepository.findByEmail(user.getEmail());
-        if (foundUser.isPresent()) {
-            throw new UserExistsException(user);
+    public void registerUser(UserRegisterDto userDto) {
+        Optional<User> foundUserWithEmail = userRepository.findByEmail(userDto.getEmail());
+        Optional<User> foundUserWithUsername = userRepository.findByUsername(userDto.getUsername());
+
+        if (foundUserWithEmail.isPresent() || foundUserWithUsername.isPresent()) {
+            throw new UserExistsException(userDto);
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+        User user = new User(userDto, encodedPassword);
+
         user.setRoles(List.of(new Role("ROLE_USER")));
         userRepository.save(user);
     }

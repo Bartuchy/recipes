@@ -1,6 +1,7 @@
 # Recipe book service
 
 In progress...
+Front off the app is in the different repo -> "recipes_front"
 
 ## As a user you will be able to: 
 * register
